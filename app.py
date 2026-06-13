@@ -94,8 +94,10 @@ if provider == "claude":
     llm = anthropic.Anthropic(api_key=api_key)
 else:
     from openai import OpenAI as _OpenAI
-    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gpt-oss:20b")
-    llm = _OpenAI(base_url="http://localhost:11434/v1", api_key="ollama")
+    OPENAI_BASE_URL = os.getenv("OPENAI_BASE_URL", "http://localhost:11434/v1")
+    OPENAI_API_KEY  = os.getenv("OPENAI_API_KEY",  "ollama")
+    OPENAI_MODEL    = os.getenv("OPENAI_MODEL",    "gpt-oss:20b")
+    llm = _OpenAI(base_url=OPENAI_BASE_URL, api_key=OPENAI_API_KEY)
 
 # ── Header ────────────────────────────────────────────────────────────────────
 st.title("PDF Q&A")
@@ -149,7 +151,7 @@ if prompt:
 
     def _stream_ollama():
         resp = llm.chat.completions.create(
-            model=OLLAMA_MODEL,
+            model=OPENAI_MODEL,
             max_tokens=1024,
             stream=True,
             messages=[{"role": "system", "content": SYSTEM}, *api_msgs],
